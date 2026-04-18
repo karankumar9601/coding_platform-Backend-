@@ -1,12 +1,19 @@
 const cookieParser = require("cookie-parser");
 const express = require("express")
 const app = express();
-const cookoParser = require("cookie-parser")
 require('dotenv').config();
 app.use(express.json())
-app.use(cookieParser)
+app.use(cookieParser())
+
+//config file 
 const main = require("./src/config/db")
 const redisClient=require("./src/config/redishConfig")
+
+//Router file
+const userRoute=require("./src/Routes/userAuthRoutes");
+
+//start URL
+app.use('/api',userRoute)
 
 
 const initialConnection = async () => {

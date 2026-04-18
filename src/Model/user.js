@@ -26,17 +26,22 @@ const userSchema = new Schema({
 
     },
     age: {
-        type:Number,
-        required:true
-
+        type: Number,
+        min: [10, "Age must be at least 10"],
+        max: [60, "Age must be less than 60"],
     },
     role: {
-        type:String,
+        type: String,
         enum: ['user', 'admin'],
-        default:User
+        default: 'user'
     },
     problemID: {
-        type:String
+        type: String,
+        default: 0
+    },
+    password: {
+        type: String,
+        required: true,
     }
 }, { timeseries: true })
 
