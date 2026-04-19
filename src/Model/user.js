@@ -35,8 +35,8 @@ const userSchema = new Schema({
         enum: ['user', 'admin'],
         default: 'user'
     },
-    problemID: {
-        type: String,
+    problemSolved: {
+        type: [String],
         default: 0
     },
     password: {
