@@ -23,13 +23,20 @@ const authMiddleware = async (req, res, next) => {
         const user = await User.findById(payload._id);
         if (!user) {
             return res.status(404).json({
-                success:false,
-                message:"user not Found"
+                success: false,
+                message: "user not Found"
             })
         }
-        req.user=user
+
+        if (user.role !== 'admin'&& user.role!=='user') {
+            return res.status(403).json({
+                success: false,
+                message: "Access denide"
+            })
+        }
+        req.user = user
         next();
-        
+
     } catch (error) {
         res.status(401).json({
             success: false,
