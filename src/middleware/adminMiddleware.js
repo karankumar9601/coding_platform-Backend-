@@ -33,6 +33,7 @@ const adminMiddlewareAuth= async(req,res,next)=>{
         message:"Access denide"
        }) 
     }
+    req.result=payload;
     next();
   } catch (error) {
     res.status(403).json({
