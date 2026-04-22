@@ -11,9 +11,11 @@ const redisClient=require("./src/config/redishConfig")
 
 //Router file
 const userRoute=require("./src/Routes/userAuthRoutes");
+const problemRouter=require("./src/Routes/problemRoute")
 
 //start URL
 app.use('/api',userRoute)
+app.use('/problem',problemRouter)
 
 
 const initialConnection = async () => {
