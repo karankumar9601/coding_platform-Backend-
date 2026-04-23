@@ -267,17 +267,17 @@ const getSingleProblem = async (req, res) => {
             })
         }
         const getProblem = await Problem.findById(id);
-         if (!getProblem) {
+        if (!getProblem) {
             return res.status(404).json({
-                success:false,
-                message:"Problem not Found"
+                success: false,
+                message: "Problem not Found"
             })
-         }
-         return res.status(200).json({
-            success:true,
-            message:"Problem fetch Successfully",
-            data:getProblem
-         })
+        }
+        return res.status(200).json({
+            success: true,
+            message: "Problem fetch Successfully",
+            data: getProblem
+        })
 
     } catch (error) {
         res.status(500).json({
@@ -289,7 +289,42 @@ const getSingleProblem = async (req, res) => {
 
 const getAllProblem = async (req, res) => {
     try {
-        res.send("hello how are you")
+        let { page = 1, limit = 10 } = req.query
+
+        page = parseInt(page);
+        limit = parseInt(limit);
+
+        if (isNaN(page) || isNaN(limit) || page < 1 || limit < 1) {
+            return res.status(400).json({
+                success:false,
+                message: "page and limit must be positive numbers"
+            });
+        }
+        const skip = (page - 1) * limit;
+        const problem = await Problem.find().skip(skip).limit(limit)
+        if (problem.length == 0) {
+            return res.status(404).json({
+                success: false,
+                message: "Problem not Found"
+            })
+        }
+        const totalData = await Problem.countDocuments();
+        if (totalData == 0) {
+            return res.status(404).json({
+                success: false,
+                message: "data not count"
+            })
+        }
+        return res.status(200).json({
+            success: true,
+            message: "Problem Fetch Successfully",
+            page,
+            limit,
+            totalData,
+            totalPage: Math.ceil(totalData /limit),
+            data:problem
+        })
+
     } catch (error) {
         res.status(500).json({
             success: false,
@@ -308,5 +343,6 @@ const solvedProblem = async (req, res) => {
         })
     }
 }
+
 
 module.exports = { createProblem, updateProblem, deleteProblem, getSingleProblem, getAllProblem, solvedProblem }
