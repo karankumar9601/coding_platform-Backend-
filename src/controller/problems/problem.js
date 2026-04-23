@@ -296,7 +296,7 @@ const getAllProblem = async (req, res) => {
 
         if (isNaN(page) || isNaN(limit) || page < 1 || limit < 1) {
             return res.status(400).json({
-                success:false,
+                success: false,
                 message: "page and limit must be positive numbers"
             });
         }
@@ -321,8 +321,8 @@ const getAllProblem = async (req, res) => {
             page,
             limit,
             totalData,
-            totalPage: Math.ceil(totalData /limit),
-            data:problem
+            totalPage: Math.ceil(totalData / limit),
+            data: problem
         })
 
     } catch (error) {
@@ -344,5 +344,57 @@ const solvedProblem = async (req, res) => {
     }
 }
 
+const filterProblem = async (req, res) => {
+    try {
+        let { tag, page = 1, limit = 5 } = req.query
+        page = parseInt(page)
+        limit = parseInt(limit)
+        if (isNaN(page) || isNaN(limit) || page < 1 || limit < 1) {
+            return res.status(400).json({
+                success: false,
+                message: "page and limit must be positive numbers"
+            });
+        }
+        if(!tag){
+           return res.status(400).json({
+            success:false,
+            message:"Invalid Input"
+           })
+        }
+        const skip=(page-1)*limit;
+        let filter={};
+        if(tag){
+            filter.tag=tag;
+        }
+        const filterdata=await Problem.find(filter).skip(skip).limit(limit)
+        if (filterdata.length==0) {
+            return res.status(404).json({
+                success:false,
+                message:"Problem not Found"
+            })
+        }
+        const totalfilterdata=await Problem.countDocuments(filter)
+        if (totalfilterdata==0) {
+            return res.status(400).json({
+                success:false,
+                message:"Something went wrong"
+            })
+        }
+        return res.status(200).json({
+            success:true,
+            message:"All data fetch successfully",
+            data:filterdata,
+            totalfilterdata,
+            totalPage:Math.ceil(totalfilterdata/limit),
+            page,
+            limit
+        })
 
-module.exports = { createProblem, updateProblem, deleteProblem, getSingleProblem, getAllProblem, solvedProblem }
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        })
+    }
+}
+module.exports = { createProblem, updateProblem, deleteProblem, getSingleProblem, getAllProblem, solvedProblem, filterProblem }
