@@ -15,6 +15,13 @@ const codeSubmission = async (req, res) => {
         }
         //fetch data from DB
         const problem=await Problem.findById(problemId)
+        if (!problem) {
+            return res.status(404).json({
+                success:false,
+                message:"Problem not found",
+                data:problem
+            })
+        }
         //store code in DB
         const submittedResult = await submitProblem.create({
             userId, problemId, code, language, status: 'pending', testCasePassed: 0,
@@ -60,7 +67,7 @@ const codeSubmission = async (req, res) => {
         for (const test of testResult) {
             if (test.status_id == 3) {
                 testCasePassed++
-                runtime = runtime + test.time
+               runtime += Number(test.time || 0);
                 memory = Math.max(memory, test.memory)
             } else if (test.status_id == 4) {
                 status = 'error'
@@ -84,6 +91,11 @@ const codeSubmission = async (req, res) => {
                 message:"Something went wrong"
             })
         }
+        if (!req.user.problemSolved.includes(problemId)) {
+           req.user.problemSolved.push(problemId)
+           await req.user.save();  
+        }
+
         return res.status(201).json({
             success:true,
             message:"code submit Successfully"
