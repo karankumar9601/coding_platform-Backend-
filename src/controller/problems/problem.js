@@ -63,7 +63,7 @@ const createProblem = async (req, res) => {
                     message: "Failed to get results from Judge0"
                 });
             }
-
+        //    console.log(testResult)
             // Verify each test case passes
             for (let i = 0; i < testResult.length; i++) {
                 const test = testResult[i];
@@ -266,7 +266,7 @@ const getSingleProblem = async (req, res) => {
                 message: "ID is missing"
             })
         }
-        const getProblem = await Problem.findById(id);
+        const getProblem = await Problem.findById(id).select("_id title description difficulty tag visibleTestCase referenceSolution startCode");
         if (!getProblem) {
             return res.status(404).json({
                 success: false,
@@ -301,7 +301,7 @@ const getAllProblem = async (req, res) => {
             });
         }
         const skip = (page - 1) * limit;
-        const problem = await Problem.find().skip(skip).limit(limit)
+        const problem = await Problem.find().skip(skip).limit(limit).select("_id title difficulty tag")
         if (problem.length == 0) {
             return res.status(404).json({
                 success: false,
@@ -366,7 +366,7 @@ const filterProblem = async (req, res) => {
         if(tag){
             filter.tag=tag;
         }
-        const filterdata=await Problem.find(filter).skip(skip).limit(limit)
+        const filterdata=await Problem.find(filter).skip(skip).limit(limit).select("_id title difficulty tag")
         if (filterdata.length==0) {
             return res.status(404).json({
                 success:false,
