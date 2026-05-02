@@ -333,16 +333,6 @@ const getAllProblem = async (req, res) => {
     }
 }
 
-const solvedProblem = async (req, res) => {
-    try {
-
-    } catch (error) {
-        res.status(500).json({
-            success: false,
-            message: error.message
-        })
-    }
-}
 
 const filterProblem = async (req, res) => {
     try {
@@ -397,4 +387,4 @@ const filterProblem = async (req, res) => {
         })
     }
 }
-module.exports = { createProblem, updateProblem, deleteProblem, getSingleProblem, getAllProblem, solvedProblem, filterProblem }
+module.exports = { createProblem, updateProblem, deleteProblem, getSingleProblem, getAllProblem, filterProblem }
