@@ -209,6 +209,30 @@ const runcode = async (req, res) => {
     }
 }
 
-module.exports = { codeSubmission, solvedProblemByUser,runcode };
+const multiplesubmissionOfOneProblem=async(req,res)=>{
+    try {
+        const userId=req.user._id;
+        const problemId=req.params.pid;
+        const ans=await submitProblem.find({userId,problemId})
+        if (ans.length===0) {
+            return res.status(404).json({
+                success:false,
+                message:"problem not Solved"
+            })
+        }
+        return res.status(200).json({
+            success:true,
+            message:"all problem fetch",
+            data:ans
+        })
+    } catch (error) {
+      res.status(500).json({
+        success:false,
+        message:error.message
+      })  
+    }
+}
+
+module.exports = { codeSubmission, solvedProblemByUser,runcode ,multiplesubmissionOfOneProblem};
 
 
