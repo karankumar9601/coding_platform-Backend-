@@ -146,6 +146,69 @@ const solvedProblemByUser = async (req, res) => {
     }
 }
 
-module.exports = { codeSubmission, solvedProblemByUser };
+const runcode = async (req, res) => {
+    try {
+        const userId = req.user._id;
+        const problemId = req.params.id
+        const { code, language } = req.body
+        if (!userId || !problemId || !code || !language) {
+            return res.status(400).json({
+                success: false,
+                message: "some field missing"
+            })
+        }
+        //fetch Problem from DB
+        const problem = await Problem.findById(problemId)
+        if (!problem) {
+            return res.status(404).json({
+                success: false,
+                message: "Problem not found",
+            })
+        }
+        //code submit to judge0
+        const languageId = getLanguageById(language);
+        if (!languageId) {
+            return res.status(404).json({
+                success: false,
+                message: `Language ID not found for language: ${language}`
+            });
+        }
+        const submissions = problem.visibleTestCase.map((testcase) => ({
+            source_code: code,
+            language_id: languageId,
+            stdin: testcase.input,
+            expected_output: testcase.output
+        }));
+        const submitResult = await submitBatch(submissions);
+        if (!submitResult || !Array.isArray(submitResult)) {
+            return res.status(400).json({
+                success: false,
+                message: "Judge0 batch submission failed"
+            });
+        }
+        const resultToken = submitResult.map((value) => value.token);
+        const testResult = await submitToken(resultToken);
+        if (!testResult || !Array.isArray(testResult)) {
+            return res.status(400).json({
+                success: false,
+                message: "Failed to get results from Judge0"
+            });
+        }
+
+
+        return res.status(200).json({
+            success: true,
+            message: "code run successfully",
+            data:testResult
+        })
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        })
+    }
+}
+
+module.exports = { codeSubmission, solvedProblemByUser,runcode };
 
 
