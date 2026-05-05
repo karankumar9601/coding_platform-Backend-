@@ -8,8 +8,7 @@ const submitProblem=require("../../Model/subimission")
 
 const register = async (req, res) => {
     try {
-
-        const { firstName, lastName, emailId, password } = req.body;
+        const { firstName, emailId, password } = req.body;
         if (!validator.isStrongPassword(password)) {
             return res.status(400).json({
                 success: false,
@@ -22,7 +21,7 @@ const register = async (req, res) => {
                 message: "invalid Email"
             })
         }
-        if (!firstName || !lastName || !emailId || !password) {
+        if (!firstName || !emailId || !password) {
             return res.status(400).json({
                 success: false,
                 message: "All fields are required"
@@ -38,7 +37,7 @@ const register = async (req, res) => {
         })
 
     } catch (error) {
-        res.status(400).json({
+        res.status(500).json({
             success: false,
             message: error.message
         })

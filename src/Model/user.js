@@ -11,7 +11,6 @@ const userSchema = new Schema({
     },
     lastName: {
         type: String,
-        required: true,
         trim: true,
         minLength: [3, "fullName is minimum 3 chatacter"],
         maxLength: [16, "fullName is contains maximum 16 charcter"]
