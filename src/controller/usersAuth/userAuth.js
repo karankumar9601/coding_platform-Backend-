@@ -4,7 +4,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const redisClient = require("../../config/redishConfig")
 const validator = require("validator")
-const submitProblem=require("../../Model/subimission")
+const submitProblem = require("../../Model/subimission")
 
 const register = async (req, res) => {
     try {
@@ -73,7 +73,7 @@ const login = async (req, res) => {
         return res.status(200).json({
             success: true,
             message: "login successfully",
-            data: { _id: user._id, email: user.emailId, name: user.firstName,role:user.role }
+            data: { _id: user._id, email: user.emailId, name: user.firstName, role: user.role }
         })
 
 
@@ -144,22 +144,73 @@ const getProfile = async (req, res) => {
     }
 }
 
-const deleteProfile=async(req,res)=>{
+const deleteProfile = async (req, res) => {
     try {
-        const userId=req.user._id;
+        const userId = req.user._id;
         await User.findByIdAndDelete(userId);
-        await submitProblem.deleteMany( {userId: userId});
+        await submitProblem.deleteMany({ userId: userId });
         res.status(200).json({
-            success:true,
-            message:"deleted successfully"
+            success: true,
+            message: "deleted successfully"
         })
     } catch (error) {
         res.status(500).json({
-            success:false,
-            message:error.message
+            success: false,
+            message: error.message
         })
     }
 }
 
+const allUser = async (req, res) => {
+    try {
+        let { page = 1, limit = 10 } = req.query
+        page = parseInt(page)
+        limit = parseInt(limit)
+        if (isNaN(page) || isNaN(limit) || page < 1 || limit < 1) {
+            return res.status(400).json({
+                success: false,
+                message: "page and limit must be positive numbers"
+            });
+        }
+        const skip = (page - 1) * limit
+        const user = await User.find().skip(skip).limit(limit).select("firstName lastName emailId role problemSolved")
+        const updatedUsers = user.map(user => ({
+            firstName: user.firstName,
+            lastName: user.lastName,
+            emailId: user.emailId,
+            role: user.role,
+            problemSolvedCount: user.problemSolved.length
+        }));
+        if (updatedUsers.length===0) {
+            return res.status(404).json({
+                success:false,
+                message:"user not found"
+            })
+        }
+        const totalUser=await User.countDocuments();
+        if (totalUser===0) {
+            return res.status(404).json({
+                success:false,
+                message:"User not Found"
+            })
+        }
+        return res.status(200).json({
+            success:true,
+            message:"All User Fetch",
+            page,
+            limit,
+            totalUser,
+            totalPage:Math.ceil(totalUser/limit),
+            data:updatedUsers
+        })
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        })
+    }
 
-module.exports = { register, login, logout, getProfile ,deleteProfile}
+}
+
+
+module.exports = { register, login, logout, getProfile, deleteProfile, allUser }

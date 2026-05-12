@@ -103,7 +103,14 @@ const codeSubmission = async (req, res) => {
 
         return res.status(201).json({
             success: true,
-            message: "code submit Successfully"
+            message: "code submit Successfully",
+            status,
+            testCasePassed,
+            totalTestCase,
+            runtime,
+            memory,
+            errorMessage,
+
         })
 
 
@@ -199,7 +206,7 @@ const runcode = async (req, res) => {
         return res.status(200).json({
             success: true,
             message: "code run successfully",
-            data:testResult
+            data: testResult
         })
     } catch (error) {
         res.status(500).json({
@@ -209,30 +216,30 @@ const runcode = async (req, res) => {
     }
 }
 
-const multiplesubmissionOfOneProblem=async(req,res)=>{
+const multiplesubmissionOfOneProblem = async (req, res) => {
     try {
-        const userId=req.user._id;
-        const problemId=req.params.pid;
-        const ans=await submitProblem.find({userId,problemId})
-        if (ans.length===0) {
+        const userId = req.user._id;
+        const problemId = req.params.pid;
+        const ans = await submitProblem.find({ userId, problemId })
+        if (ans.length === 0) {
             return res.status(404).json({
-                success:false,
-                message:"problem not Solved"
+                success: false,
+                message: "problem not Solved"
             })
         }
         return res.status(200).json({
-            success:true,
-            message:"all problem fetch",
-            data:ans
+            success: true,
+            message: "all problem fetch",
+            data: ans
         })
     } catch (error) {
-      res.status(500).json({
-        success:false,
-        message:error.message
-      })  
+        res.status(500).json({
+            success: false,
+            message: error.message
+        })
     }
 }
 
-module.exports = { codeSubmission, solvedProblemByUser,runcode ,multiplesubmissionOfOneProblem};
+module.exports = { codeSubmission, solvedProblemByUser, runcode, multiplesubmissionOfOneProblem };
 
 
