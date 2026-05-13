@@ -7,7 +7,11 @@ const codeSubmission = async (req, res) => {
     try {
         const userId = req.user._id;
         const problemId = req.params.id
-        const { code, language } = req.body
+        let { code, language } = req.body
+        if (language==="cpp") {
+            language="c++"
+        }
+
         if (!userId || !problemId || !code || !language) {
             return res.status(400).json({
                 success: false,
