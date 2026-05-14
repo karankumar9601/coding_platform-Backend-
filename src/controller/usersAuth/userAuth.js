@@ -124,7 +124,7 @@ const getProfile = async (req, res) => {
                 message: "Unauthorize users"
             })
         }
-        const user = await User.findById(id)
+        const user = await User.findById(id).select("firstName lastName emailId age problemSolved ")
         if (!user) {
             return res.status(404).json({
                 success: false,
@@ -181,27 +181,27 @@ const allUser = async (req, res) => {
             role: user.role,
             problemSolvedCount: user.problemSolved.length
         }));
-        if (updatedUsers.length===0) {
+        if (updatedUsers.length === 0) {
             return res.status(404).json({
-                success:false,
-                message:"user not found"
+                success: false,
+                message: "user not found"
             })
         }
-        const totalUser=await User.countDocuments();
-        if (totalUser===0) {
+        const totalUser = await User.countDocuments();
+        if (totalUser === 0) {
             return res.status(404).json({
-                success:false,
-                message:"User not Found"
+                success: false,
+                message: "User not Found"
             })
         }
         return res.status(200).json({
-            success:true,
-            message:"All User Fetch",
+            success: true,
+            message: "All User Fetch",
             page,
             limit,
             totalUser,
-            totalPage:Math.ceil(totalUser/limit),
-            data:updatedUsers
+            totalPage: Math.ceil(totalUser / limit),
+            data: updatedUsers
         })
     } catch (error) {
         res.status(500).json({
@@ -212,5 +212,35 @@ const allUser = async (req, res) => {
 
 }
 
+const updateProfile = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { _id } = req.user;
 
-module.exports = { register, login, logout, getProfile, deleteProfile, allUser }
+        if (id != _id) {
+            return res.status(403).json({
+                success: false,
+                message: "Unauthorize users"
+            })
+        }
+        const updateData=await User.findByIdAndUpdate(id,{...req.body},{runValidators:true, returnDocument:'after'})
+        if (!updateData) {
+            return res.status(400).json({
+                success:false,
+                message:"Profile Item not Updated"
+            })
+        }
+        return res.status(200).json({
+            success:true,
+            message:"Profile Updated successFully"
+        })
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        })
+    }
+}
+
+
+module.exports = { register, login, logout, getProfile, deleteProfile, allUser, updateProfile }

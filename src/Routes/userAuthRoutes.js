@@ -1,7 +1,7 @@
 
 const express = require("express")
 const userRoute = express.Router();
-const { register, login, logout, getProfile,deleteProfile,allUser} = require("../controller/usersAuth/userAuth")
+const { register, login, logout, getProfile,deleteProfile,allUser,updateProfile} = require("../controller/usersAuth/userAuth")
 const authMiddleware=require("../middleware/authMiddleware")
 const adminMiddlewareAuth=require("../middleware/adminMiddleware")
 
@@ -24,6 +24,7 @@ userRoute.get('/check_auth',authMiddleware,async(req,res)=>{
         data:reply
     })
 })
+userRoute.patch('/userUpdate/:id',authMiddleware,updateProfile)
 
 
 module.exports = userRoute;
