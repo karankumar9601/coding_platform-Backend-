@@ -14,6 +14,7 @@ const redisClient=require("./src/config/redishConfig")
 const userRoute=require("./src/Routes/userAuthRoutes");
 const problemRouter=require("./src/Routes/problemRoute")
 const submitRouter=require("./src/Routes/submitProblemRoute")
+const AIChatbotRouter=require("./src/Routes/AiChatboat")
 
 //cors issue resolve
 app.use(cors({
@@ -24,6 +25,7 @@ app.use(cors({
 app.use('/api',userRoute)
 app.use('/problem',problemRouter)
 app.use('/user',submitRouter)
+app.use('/ai',AIChatbotRouter)
 
 
 const initialConnection = async () => {

@@ -129,25 +129,30 @@ const codeSubmission = async (req, res) => {
 const solvedProblemByUser = async (req, res) => {
     try {
         const userId = req.user._id;
-        let { page = 1, limit = 5 } = req.query
+        let { page = 1, limit = 10 } = req.query
         page = parseInt(page)
         limit = parseInt(limit)
         const skip = (page - 1) * limit
         const user = await User.findById(userId).populate({
             path: "problemSolved",
             select: "_id title status difficulty tag"
-        }).skip(skip).limit(limit)
+        }).skip(skip).limit(limit).select("_id firstName lastName emailId problemSolved createdAt updatedAt")
         if (!user) {
             return res.status(404).json({
                 success: false,
                 message: "Problem not solved"
             })
         }
+        const totalSolvedProblem=user.problemSolved.length
         return res.status(200).json({
             success: true,
             message: "All Solved Fetch",
+            length: totalSolvedProblem,
+            totalPage:Math.ceil(totalSolvedProblem/limit),
             data: user,
-            length: user.problemSolved.length
+            page,
+            limit
+
         })
     } catch (error) {
         res.status(500).json({
