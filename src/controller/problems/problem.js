@@ -1,5 +1,6 @@
 const Problem = require("../../Model/problem")
 const { getLanguageById, submitBatch, submitToken } = require("../../utils/problemUtility")
+const videoSolution=require("../../Model/videoSolution")
 
 const createProblem = async (req, res) => {
     try {
@@ -273,10 +274,16 @@ const getSingleProblem = async (req, res) => {
                 message: "Problem not Found"
             })
         }
+        const getvideoSolution=await videoSolution.findOne({problemId:id}).select("secureURL thumbnailURL duration")
+         const finalData = {
+            ...getProblem.toObject(),
+            videoSolution: getvideoSolution
+        }
+        
         return res.status(200).json({
             success: true,
             message: "Problem fetch Successfully",
-            data: getProblem
+            data: finalData
         })
 
     } catch (error) {
