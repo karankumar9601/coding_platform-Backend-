@@ -10,11 +10,12 @@ app.use(cookieParser())
 const main = require("./src/config/db")
 const redisClient=require("./src/config/redishConfig")
 
-//Router file
+//Route file
 const userRoute=require("./src/Routes/userAuthRoutes");
 const problemRouter=require("./src/Routes/problemRoute")
 const submitRouter=require("./src/Routes/submitProblemRoute")
 const AIChatbotRouter=require("./src/Routes/AiChatboat")
+const videoSolutionRoute=require("./src/Routes/videoSolutionRoute")
 
 //cors issue resolve
 app.use(cors({
@@ -26,6 +27,7 @@ app.use('/api',userRoute)
 app.use('/problem',problemRouter)
 app.use('/user',submitRouter)
 app.use('/ai',AIChatbotRouter)
+app.use('/problemVideo',videoSolutionRoute)
 
 
 const initialConnection = async () => {
