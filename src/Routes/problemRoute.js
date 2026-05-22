@@ -12,8 +12,8 @@ problemRouter.delete("/:id",adminmiddleware,deleteProblem)
 
 //user and admin both work
 problemRouter.get("/filterdata",authMiddleware,filterProblem)
-problemRouter.get("/:id",authMiddleware,getSingleProblem)
 problemRouter.get("/",authMiddleware,getAllProblem)
+problemRouter.get("/:id",authMiddleware,getSingleProblem)
 
 
 module.exports=problemRouter;
