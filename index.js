@@ -19,7 +19,7 @@ const videoSolutionRoute=require("./src/Routes/videoSolutionRoute")
 
 //cors issue resolve
 app.use(cors({
-    origin: "http://localhost:5173",
+    origin: process.env.FRONTEND_DEPLOY,
     credentials: true
 }));
 //start URL
