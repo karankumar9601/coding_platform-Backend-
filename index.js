@@ -19,7 +19,7 @@ const videoSolutionRoute=require("./src/Routes/videoSolutionRoute")
 
 //cors issue resolve
 app.use(cors({
-    origin: "http://localhost:5173",
+    origin: "https://beautiful-treacle-1ab32b.netlify.app",
     credentials: true
 }));
 //start URL
