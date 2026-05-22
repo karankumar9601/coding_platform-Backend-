@@ -69,7 +69,12 @@ const login = async (req, res) => {
             })
         }
         const token = jwt.sign({ _id: user._id, emailId: user.emailId, role: user.role }, process.env.JWT_SECRET_KEY, { expiresIn: 60 * 60 })
-        res.cookie('token', token, { maxAge: 60 * 60 * 1000 })
+        res.cookie('token', token, {
+            httpOnly: true,
+            secure: true,
+            sameSite: "none",
+            maxAge: 60 * 60 * 1000
+        })
         return res.status(200).json({
             success: true,
             message: "login successfully",
@@ -223,16 +228,16 @@ const updateProfile = async (req, res) => {
                 message: "Unauthorize users"
             })
         }
-        const updateData=await User.findByIdAndUpdate(id,{...req.body},{runValidators:true, returnDocument:'after'})
+        const updateData = await User.findByIdAndUpdate(id, { ...req.body }, { runValidators: true, returnDocument: 'after' })
         if (!updateData) {
             return res.status(400).json({
-                success:false,
-                message:"Profile Item not Updated"
+                success: false,
+                message: "Profile Item not Updated"
             })
         }
         return res.status(200).json({
-            success:true,
-            message:"Profile Updated successFully"
+            success: true,
+            message: "Profile Updated successFully"
         })
     } catch (error) {
         res.status(500).json({
